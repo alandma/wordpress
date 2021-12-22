@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  
+  wp:
+    user: "${UID}:${GID}"
+    image: wordpress:5.8-apache
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: wpdb:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wpPass@1
+      WORDPRESS_DB_NAME: dckr_wp_01
+    volumes:
+      - ./wp:/var/www/html
+    ports:
+      - "8088:80"
+    depends_on:
+      - wpdb
+  
+  wpdb:
+    build:
+      context: ./mysqldb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@1
+      MYSQL_DATABASE: dckr_wp_01
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wpPass@1
+    volumes:
+      - db-vol:/var/lib/mysql
+
+volumes:
+  db-vol:
